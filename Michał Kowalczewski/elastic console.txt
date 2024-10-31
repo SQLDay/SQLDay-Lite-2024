@@ -1,0 +1,31 @@
+# Create index with mappings
+PUT vectorized-movies
+{
+  "mappings": {
+    "properties": {
+      "vector.values": {
+        "type": "dense_vector",
+        "dims": 385,
+        "index": true,
+        "similarity": "cosine"
+      },
+      "text": {
+        "type": "text"
+      }
+    }
+  }
+}
+
+# Search using knn
+POST /vectorized-movies/_search?
+{
+  "knn":
+  [
+    {
+    "field":"vector.values",
+    "query_vector":"${vector}",
+    "k":10,
+    "num_candidates":100
+    }
+  ]
+}

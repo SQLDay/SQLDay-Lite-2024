@@ -1,0 +1,691 @@
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+
+01 - List workspaces
+	 
+	mslearn: https://learn.microsoft.com/en-us/rest/api/fabric/admin/workspaces/list-workspaces?tabs=HTTP
+	mslearn: https://learn.microsoft.com/en-us/rest/api/fabric/core/workspaces/list-workspaces?tabs=HTTP
+
+	REQUEST
+		GET https://api.fabric.microsoft.com/v1/admin/workspaces    tylko dla adminów
+		GET https://api.fabric.microsoft.com/v1/workspaces
+		Authorization: 
+			Bearer <your_token>
+
+	RESPONSE
+		{
+			"value": [
+				{
+					"id": "57d15846-58ff-4133-a75a-550faab4868b",
+					"displayName": "My workspace",
+					"description": "",
+					"type": "Personal"
+				},
+				{
+					"id": "b05427a5-f386-40e4-9e20-bb23f4d1c717",
+					"displayName": "NW_fabric_demo",
+					"description": "",
+					"type": "Workspace",
+					"capacityId": "6b4b3f8a-c7ee-4972-bde1-a29e91b71720"
+				}
+			]
+		}
+		
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+02 - Create workspace
+
+	mslearn: https://learn.microsoft.com/en-us/rest/api/fabric/core/workspaces/create-workspace?tabs=HTTP
+	
+	REQUEST
+		POST https://api.fabric.microsoft.com/v1/workspaces
+
+		{
+		  "displayName": "nw_sqlday_lite_demo"
+		}
+	
+	RESPONSE 
+		201 Created
+		{
+			"id": "97f6fbd3-880b-4f97-928c-cc28386c0b1a",
+			"displayName": "nw_sqlday_lite_demo",
+			"description": "",
+			"type": "Workspace"
+		}
+	
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+03 -  List workspaces again
+
+	mslearn: https://learn.microsoft.com/en-us/rest/api/fabric/admin/workspaces/list-workspaces?tabs=HTTP
+	
+	
+	REQUEST
+		GET https://api.fabric.microsoft.com/v1/workspaces
+	
+	RESPONSE
+		{
+			"value": [
+				{
+					"id": "57d158a6-585f-4123-a75a-550faab4868b",
+					"displayName": "My workspace",
+					"description": "",
+					"type": "Personal"
+				},
+				{
+					"id": "b05427a5-f386-4024-95b0-bb23f4d1c717",
+					"displayName": "NW_fabric_demo",
+					"description": "",
+					"type": "Workspace",
+					"capacityId": "6b4b3f8a-c7ee-4972-bde1-a29e91b71720"
+				},
+				{
+					"id": "64abd069-f055-4219-9d15-7a8bcb27f3a7",
+					"displayName": "nw_sqlday_lite_demo",
+					"description": "",
+					"type": "Workspace"
+				}
+			]
+		}
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+04 - List items in workspace
+	
+	mslearn: https://learn.microsoft.com/en-us/rest/api/fabric/core/items/list-items?tabs=HTTP
+	
+	REQUEST
+		GET https://api.fabric.microsoft.com/v1/workspaces/{workspace-id}/items
+		GET https://api.fabric.microsoft.com/v1/workspaces/64abd069-f055-4219-9d15-7a8bcb27f3a7/items
+
+	RESPONSE
+		{
+			"value": []
+		}
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+05 - List lakehouses in workspace
+
+	mslearn: https://learn.microsoft.com/en-us/rest/api/fabric/lakehouse/items/list-lakehouses?tabs=HTTP
+	GET https://api.fabric.microsoft.com/v1/workspaces/64abd069-f055-4219-9d15-7a8bcb27f3a7/lakehouses
+	
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+06 - Create sample lakehouse
+
+	mslearn: https://learn.microsoft.com/en-us/rest/api/fabric/lakehouse/items/create-lakehouse?tabs=HTTP
+	
+	REQUEST
+		POST https://api.fabric.microsoft.com/v1/workspaces/64abd069-f055-4219-9d15-7a8bcb27f3a7/lakehouses
+	
+		{
+		  "displayName": "Lakehouse_1",
+		  "description": "A sample lakehouse description"
+		}
+
+
+	RESPONSE 
+	
+		{
+			"requestId": "c0aaeca0-9293-4126-8314-727c32c6d101",
+			"errorCode": "UnsupportedCapacitySKU",
+			"message": "The operation is not supported over the capacity SKU"
+		}
+
+	Findings: 
+		- from fabric portal perspective, I don't see diamond icon next to workspace name .
+		- from fabric portal perspective, message while creating workspace
+		
+			"Upgrade to a free Microsoft Fabric trial
+			To create a Lakehouse, your workspace nw_sqlday_lite_demo needs to be upgraded to a free Fabric trial capacity. Upgrading requires us to create a free trial capacity for you and assign this workspace to it. Learn more "
+	
+	Suggested solution:
+	
+		Unfortunately, there isn't a specific REST API endpoint to directly upgrade a workspace to a Microsoft Fabric trial capacity. The process of upgrading a workspace to trial capacity, as described in your error, must typically be done through the Fabric user interface. The error message you're seeing is an invitation to start a trial through the UI, and as of now, upgrading to a trial is not automated via API.
+
+		To proceed, you would need to manually:
+
+		1. Sign in to Microsoft Fabric.
+		2. Go to your workspace (in this case, nw_sqlday_lite_demo).
+		3. When prompted, click to upgrade the workspace to a free Fabric trial capacity.
+		4. This step will enable the workspace to utilize Fabric services like the Lakehouse.
+
+		You can read more about Microsoft Fabric Trial capacities and how to manage them here on Microsoft Learn​
+
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+
+I have one another upgraded workspace so lets create the new one, and rename the old one. 
+It will show us how to DELETE and PATCH using MS Fabric REST API.
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+
+07 - Remove workspace  nw_sqlday_lite_demo
+	and rename existing nw_fabric_demo to nw_sqlday_lite_demo
+	
+	mslearn: https://learn.microsoft.com/en-us/rest/api/fabric/core/workspaces/delete-workspace?tabs=HTTP
+	
+	REQUEST
+		DELETE https://api.fabric.microsoft.com/v1/workspaces/64abd069-f055-4219-9d15-7a8bcb27f3a7
+
+	RESPONSE 
+		200 OK
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+08 - Rename existing workspace
+	
+	
+	renaming means updating/patching workspace
+	
+	mslearn: https://learn.microsoft.com/en-us/rest/api/fabric/core/workspaces/update-workspace?tabs=HTTP
+	
+	REQUEST
+		PATCH https://api.fabric.microsoft.com/v1/workspaces/b05427a5-f386-40e4-9eb0-bb23f4d1c717
+
+		{
+		  "displayName": "nw_sqlday_lite_demo",
+		  "description": "Demo workspace for SQLDay Lite 2024"
+		}
+	
+	
+	RESPONSE
+		{
+			"id": "b05427a5-f386-40e4-9eb0-bb23f4d1c717",
+			"displayName": "nw_sqlday_lite_demo",
+			"description": "Demo workspace for SQLDay Lite 2024",
+			"type": "Workspace",
+			"capacityId": "6b4b3f8a-c7ee-4972-bde1-a29e91b71720"
+		}
+	
+	Go to fabric web or get workspace list again to check it out :)
+	
+----------------------------------------------------------------------------------------------------	
+----------------------------------------------------------------------------------------------------
+09 - List workspaces again
+
+	mslearn: https://learn.microsoft.com/en-us/rest/api/fabric/admin/workspaces/list-workspaces?tabs=HTTP
+		
+	REQUEST
+		GET https://api.fabric.microsoft.com/v1/workspaces
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+
+10 - Create lakehouse in upgraded workspace
+
+	mslearn: https://learn.microsoft.com/en-us/rest/api/fabric/lakehouse/items/create-lakehouse?tabs=HTTP
+	
+	REQUEST
+		POST https://api.fabric.microsoft.com/v1/workspaces/b05427a5-f386-40e4-9eb0-bb23f4d1c717/lakehouses
+		
+		{
+		  "displayName": "dc_lakehouse",
+		  "description": "Demo lakehouse instance for SQLDay Lite 2024"
+		}
+
+	RESPONSE
+		{
+			"id": "05199778-5924-47a1-8ea1-ad93bc981d02",
+			"type": "Lakehouse",
+			"displayName": "dc_lakehouse",
+			"description": "Demo lakehouse instance for SQLDay Lite 2024",
+			"workspaceId": "b05427a5-f386-40e4-9eb0-bb23f4d1c717"
+		}
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+11 - List lakehouses
+
+	mslearn: https://learn.microsoft.com/en-us/rest/api/fabric/lakehouse/items/list-lakehouses?tabs=HTTP
+	
+	REQUEST
+		GET https://api.fabric.microsoft.com/v1/workspaces/b05427a5-f386-40e4-9eb0-bb23f4d1c717/lakehouses
+	
+	RESPONSE
+		{
+			"value": [
+				{
+					"id": "05199778-5924-47a1-8ea1-ad93bc981d02",
+					"type": "Lakehouse",
+					"displayName": "DC_lakehouse",
+					"description": "Demo lakehouse instance for SQLDay Lite 2024",
+					"workspaceId": "b05427a5-f386-40e4-9eb0-bb23f4d1c717",
+					"properties": {
+						"oneLakeTablesPath": "https://onelake.dfs.fabric.microsoft.com/b05427a5-f386-40e4-9eb0-bb23f4d1c717/05199778-5924-47a1-8ea1-ad93bc981d02/Tables",
+						"oneLakeFilesPath": "https://onelake.dfs.fabric.microsoft.com/b05427a5-f386-40e4-9eb0-bb23f4d1c717/05199778-5924-47a1-8ea1-ad93bc981d02/Files",
+						"sqlEndpointProperties": {
+							"connectionString": "6zw336kjyqpurk5vg66qg27loy-uutvjmeg6psebhvqxmr7juohc4.datawarehouse.fabric.microsoft.com",
+							"id": "cbe1671a-aca6-4a21-bbc7-d68f4ce05daf",
+							"provisioningStatus": "Success"
+						}
+					}
+				}
+			]
+		}
+
+	Findings: 
+		- Have a look on oneLakeTablesPath and oneLakeFilesPath. Is it the way to GET list of Tables and Files from lakehouse? 
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+
+12 - Get list of lakehouse tables
+
+
+	First, let's try links from GET Lakehhouse request
+	
+	"oneLakeTablesPath": "https://onelake.dfs.fabric.microsoft.com/b05427a5-f386-40e4-9eb0-bb23f4d1c717/05199778-5924-47a1-8ea1-ad93bc981d02/Tables",
+    "oneLakeFilesPath": "https://onelake.dfs.fabric.microsoft.com/b05427a5-f386-40e4-9eb0-bb23f4d1c717/05199778-5924-47a1-8ea1-ad93bc981d02/Files",
+	
+	{
+		"error": {
+			"code": "Unauthorized",
+			"message": "Authentication Failed with Audience validation failed for audience 'https://api.fabric.microsoft.com'"
+		}
+	}
+	
+	Nope...
+	Let's try another way. Provided by API Specification.
+	
+	mslearn: https://learn.microsoft.com/en-us/rest/api/fabric/lakehouse/tables/list-tables?tabs=HTTP
+	
+	REQUEST 
+		GET https://api.fabric.microsoft.com/v1/workspaces/b05427a5-f386-40e4-9eb0-bb23f4d1c717/lakehouses/05199778-5924-47a1-8ea1-ad93bc981d02/tables
+	
+	RESPONSE
+		{
+		"continuationToken": null,
+		"continuationUri": null,
+		"data": []
+	}
+
+
+----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+
+13 - Get list of lakehouse files
+
+	API specification mentioned only about tables, but let's have a look if we can do the same for files. 
+
+	REQUEST 
+		GET https://api.fabric.microsoft.com/v1/workspaces/b05427a5-f386-40e4-9eb0-bb23f4d1c717/lakehouses/05199778-5924-47a1-8ea1-ad93bc981d02/files
+	
+	RESPONSE
+		{
+			"requestId": "0483fd07-1128-4de6-a9b5-84c4411d6d40",
+			"errorCode": "EndpointOrResourceNotFound",
+			"message": "The endpoint or resource could not be found"
+		}
+
+	Nope...
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+
+14 - Create data pipeline
+
+	The idea was to check files, and maybe upload files. Since there is no way to check on files, lets create data pipeline to get some sample data. 
+	Is REST API ready to create data pipeline with defined actions? 
+	
+	mslearn : https://learn.microsoft.com/en-us/rest/api/fabric/datapipeline/items/create-data-pipeline?tabs=HTTP
+	
+	REQUEST
+		POST https://api.fabric.microsoft.com/v1/workspaces/b05427a5-f386-40e4-9eb0-bb23f4d1c717/dataPipelines
+		{
+		  "displayName": "DataPipeline Public Holidays",
+		  "description": "Sample data pipeline with public holidays"
+		}
+
+	RESPONSE
+		{
+			"id": "9ee0e003-c0ad-4b49-8cf1-07d82826a8a5",
+			"type": "DataPipeline",
+			"displayName": "DataPipeline Public Holidays",
+			"description": "Sample data pipeline with public holidays",
+			"workspaceId": "b05427a5-f386-40e4-9eb0-bb23f4d1c717"
+		}
+
+	Finding: 
+	 - Created data pipeline is empty. As expected. 
+	 
+----------------------------------------------------------------------------
+*** Create data pipeline with actions?
+----------------------------------------------------------------------------
+
+	No specific mentions in API Specification. 
+	Let's ask GPT ;) 
+	
+
+	GPT REQUEST suggestion: 
+		POST https://api.fabric.microsoft.com/v1/workspaces/b05427a5-f386-40e4-9eb0-bb23f4d1c717/dataPipelines
+		{
+		  "displayName": "DataPipeline Public Holidays 2",
+		  "description": "Sample data pipeline with public holidays",
+		  "activities": [
+			{
+			  "name": "Copy Public Holidays",
+			  "type": "Copy",
+			  "source": {
+				"type": "SampleData",
+				"dataset": "public_holidays"
+			  },
+			  "sink": {
+				"type": "Lakehouse",
+				"lakehouseId": "05199778-5924-47a1-8ea1-ad93bc981d02",
+				"outputPath": "/Files/public_holidays.parquet"
+			  }
+			}
+		  ]
+		}
+
+
+	Pipeline has been created but without any actions, just empty instance.
+	RESPONSE:	
+		{
+			"id": "3e88eb8a-fa2f-4d51-bb4f-338f9765ddb7",
+			"type": "DataPipeline",
+			"displayName": "DataPipeline Public Holidays 2",
+			"description": "Sample data pipeline with public holidays",
+			"workspaceId": "b05427a5-f386-40e4-9eb0-bb23f4d1c717"
+		}
+
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+
+15 - List data pipelines
+
+	mslearn: https://learn.microsoft.com/en-us/rest/api/fabric/datapipeline/items/list-data-pipelines?tabs=HTTP
+	
+	REQUEST
+		GET https://api.fabric.microsoft.com/v1/workspaces/b05427a5-f386-40e4-9eb0-bb23f4d1c717/dataPipelines
+		
+	
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+16 - Remove not needed pipeline
+
+	mslearn: 
+	
+	REQUEST
+		DELETE https://api.fabric.microsoft.com/v1/workspaces/b05427a5-f386-40e4-9eb0-bb23f4d1c717/dataPipelines/<pipeline_uuid>
+	
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+Some manual actions in Fabric 
+
+	lets add sample data file from built in samples (puplic holidays)
+ 
+	- choose data source : sample data public holidays
+	- choose data destination : dc_Lakehouse
+	- root folder: Files
+	- public_holidays
+		Copy behavior must be "Merge files" when sink is a file and source is a folder or specifies wildcard file name, wildcard folder path or file filter.
+	file format: parquet
+	compression type: snappy
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+Can we check the pipeline execution status? 
+
+Pipeline run ID:
+dda8c3ec-a743-40d9-ad6f-57c7b6ebe5d6
+	
+	Long running operations state
+	mslearn: https://learn.microsoft.com/en-us/rest/api/fabric/core/long-running-operations/get-operation-state
+	
+	REQUEST
+		GET https://api.fabric.microsoft.com/v1/operations/dda8c3ec-a743-40d9-ad6f-57c7b6ebe5d6
+	
+		{
+		  "requestId": "cd5c8934-7df4-469d-85eb-66cb7afd710e",
+		  "errorCode": "OperationNotFound",
+		  "message": "Cannot find an operation with the ID provided"
+		}
+	
+	Nope...
+	
+	
+	Get Item Job Instance State
+	GET https://workload.contoso.com/workload-api-path-placeholder/workspaces/{workspaceId}/items/{itemType}/{itemId}/jobTypes/{jobType}/instances/{jobInstanceId}
+	
+	Nope...
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+
+Maybe we can check if the files are already there... ? 
+Nope...
+
+	https://api.fabric.microsoft.com/v1/workspaces/b05427a5-f386-40e4-9eb0-bb23f4d1c717/lakehouses/05199778-5924-47a1-8ea1-ad93bc981d02/files
+
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+17 - Create notebook
+
+	Let's create the notebook, which takes data from sample file and prepare tables. 
+
+	mslearn: https://learn.microsoft.com/en-us/rest/api/fabric/notebook/items/create-notebook?tabs=HTTP
+	
+	REQUEST
+		POST https://api.fabric.microsoft.com/v1/workspaces/{workspaceId}/notebooks
+		{
+		  "value": [
+			{
+			  "id": "d2ac8c0d-d0b2-4836-b195-3ae3a4f42133",
+			  "type": "Notebook",
+			  "displayName": "Notebook_001",
+			  "description": "Notebook with markdown and code cells",
+			  "workspaceId": "b05427a5-f386-40e4-9eb0-bb23f4d1c717"
+			}
+		  ]
+		}
+		
+	Is there a way to add cells? 
+	
+	REQUEST
+		POST https://api.fabric.microsoft.com/v1/workspaces/{workspaceId}/notebooks
+		{
+		  "displayName": "Notebook_002",
+		  "description": "Notebook with markdown and code cells",
+		  "cells": [
+			{
+			  "type": "markdown",
+			  "content": "# Markdown Cell\nhi"
+			},
+			{
+			  "type": "code",
+			  "language": "python",
+			  "content": "print('Hello There')"
+			}
+		  ]
+		}
+			
+		
+		
+		Let's check it we can see the notebook in Fabric web. 
+		
+		Nope.. 
+		
+	Another try, but it is not clear what the payload means
+	
+	POST https://api.fabric.microsoft.com/v1/workspaces/cfafbeb1-8037-4d0c-896e-a46fb27ff229/notebooks
+
+	{
+	  "displayName": "Notebook 1",
+	  "description": "A notebook description",
+	  "definition": {
+		"format": "ipynb",
+		"parts": [
+		  {
+			"path": "notebook-content.py",
+			"payload": "eyJuYmZvcm1hdCI6N..5ndWUiOiJweXRob24ifX19",
+			"payloadType": "InlineBase64"
+		  },
+		  {
+			"path": ".platform",
+			"payload": "ZG90UGxhdGZvcm1CYXNlNjRTdHJpbmc=",
+			"payloadType": "InlineBase64"
+		  }
+		]
+	  }
+	}
+
+	Here I've found the explanation -> https://learn.microsoft.com/en-us/fabric/data-engineering/notebook-public-api
+	But this is still much harder and not efficient enough.
+		
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+
+Imported prepared notebook manually. 
+Ran the notebook manually. 
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+18 - Get notebook definition 
+
+	mslearn: 
+	
+	REQUEST: 
+		POST https://api.fabric.microsoft.com/v1/workspaces/{workspaceId}/notebooks/{notebookId}/getDefinition
+		
+	
+
+	RESPONSE: 
+		...
+	
+		cache-control: no-store, must-revalidate, no-cache
+		content-length: 24
+		content-type: application/json; charset=utf-8
+		location: https://api.fabric.microsoft.com/v1/operations/e7116698-4fb5-46fa-ba90-3c29abc77d56
+		pragma: no-cache
+		requestid: 6b3372d0-5b6e-4e08-b79c-8c1a2c045524
+		retry-after: 20
+		x-ms-operation-id: e7116698-4fb5-46fa-ba90-3c29abc77d56
+
+	Questions: 
+		- why POST not GET? 
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+
+19 - Check notebook run status 
+
+	mslearn: https://learn.microsoft.com/en-us/rest/api/fabric/core/long-running-operations/get-operation-state?tabs=HTTP
+	
+	REQUEST: 
+		GET https://api.fabric.microsoft.com/v1/operations/e7116698-4fb5-46fa-ba90-3c29abc77d56
+
+		{
+			"status": "Succeeded",
+			"createdTimeUtc": "2024-10-16T15:27:36.2902092",
+			"lastUpdatedTimeUtc": "2024-10-16T15:27:37.1176487",
+			"percentComplete": 100,
+			"error": null
+		}
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+
+# Define file path
+file_path = "/path/to/your/file.parquet"
+
+# Load the file into a DataFrame (for Parquet)
+df = spark.read.parquet(file_path)
+
+
+# Define the path where the table will be stored
+output_table_path = "Tables/YourTableName"
+
+# Save the DataFrame as a table in Lakehouse
+df.write.mode('overwrite').saveAsTable(output_table_path)
+
+# Verify that the table has been created
+spark.sql(f"SELECT * FROM {output_table_path}").show()
+
+
+
+20 - Check tables
+
+	Notebook generated tables
+
+	mslearn: https://learn.microsoft.com/en-us/rest/api/fabric/lakehouse/tables/list-tables?tabs=HTTP
+	
+	REQUEST 
+		GET https://api.fabric.microsoft.com/v1/workspaces/b05427a5-f386-40e4-9eb0-bb23f4d1c717/lakehouses/05199778-5924-47a1-8ea1-ad93bc981d02/tables
+	
+	RESPONSE
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+21 - Grant access to workspace
+
+	Check role assignments
+	
+
+	mslearn: https://learn.microsoft.com/en-us/rest/api/fabric/admin/workspaces/list-workspace-access-details?tabs=HTTP
+	
+	REQUEST
+		GET https://api.fabric.microsoft.com/v1/admin/workspaces/b05427a5-f386-40e4-9eb0-bb23f4d1c717/users
+			
+		{
+		  "requestId": "1f6598a1-29c5-48d8-9b2c-ac54207cd5ad",
+		  "errorCode": "InsufficientScopes",
+		  "message": "The caller does not have sufficient scopes to perform this operation"
+		}
+
+
+
+	Another way
+	
+	REQUEST
+		GET	https://api.fabric.microsoft.com/v1/workspaces/b05427a5-f386-40e4-9eb0-bb23f4d1c717/roleAssignments
+
+	
+	
+	
+	
+	Add assignment
+	mslearn: https://learn.microsoft.com/en-us/rest/api/fabric/core/workspaces/add-workspace-role-assignment?tabs=HTTP
+	
+	REQUEST: 
+	POST https://api.fabric.microsoft.com/v1/workspaces/b05427a5-f386-40e4-9eb0-bb23f4d1c717/roleAssignments
+	{
+		"principal": {
+				
+				"displayName": "Another User",
+				"type": "User",
+				"userDetails": {
+				  "userPrincipalName": "anotheruser@domain.pl"
+				},
+		"role": "Viewer"
+	}
+			
+	RESPONSE:
+	HTTP 400: 
+		{
+		  "requestId": "19a16b62-202e-40a1-ae0d-0dbe8c3c714c",
+		  "errorCode": "InvalidInput",
+		  "moreDetails": [
+			{
+			  "errorCode": "InvalidParameter",
+			  "message": "Required property 'id' not found in JSON. Path 'principal', line 10, position 1."
+			},
+			{
+			  "errorCode": "InvalidParameter",
+			  "message": "The Role field is required."
+			}
+		  ],
+		  "message": "The request has an invalid input"
+		}
+
+	Which means, you have to be an admin to know user id's. Then you are able to grant access.
+	From Fabric web, it is possible and way more easier to achieve.
+
